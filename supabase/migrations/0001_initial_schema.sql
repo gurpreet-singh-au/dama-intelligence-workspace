@@ -282,4 +282,5 @@ left join public.dama_concession_rules skills on skills.dama_occupation_rule_id 
 where dor.review_status = 'approved'
   and s.status = 'approved_for_production_rules'
   and dor.source_id is not null
+  and dor.source_snapshot_id is not null
   and dor.superseded_date is null;

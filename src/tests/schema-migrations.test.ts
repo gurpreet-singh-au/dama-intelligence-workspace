@@ -13,6 +13,7 @@ describe("schema migration safety gates", () => {
     expect(viewSql).toContain("from public.dama_occupation_rules dor");
     expect(viewSql).toContain("dor.review_status = 'approved'");
     expect(viewSql).toContain("s.status = 'approved_for_production_rules'");
+    expect(viewSql).toContain("dor.source_snapshot_id is not null");
     expect(viewSql).not.toContain("candidate_extraction_records");
   });
 

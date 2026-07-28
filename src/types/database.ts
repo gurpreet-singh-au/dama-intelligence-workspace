@@ -82,7 +82,15 @@ export type ApprovedComparisonRow = Required<
   anzscoCode: string;
   ruleId: string;
   source: SourceRecord;
+  sourceTitle: string;
+  sourceUrl?: string;
+  sourceReference: string;
+  sourceAuthorityTier: SourceAuthorityTier;
+  sourceDate?: string;
+  accessedAt?: string;
   sourceSnapshotId: string;
+  effectiveDate?: string;
+  supersededDate?: string;
   reviewRequiredReason?: ReviewRequiredReason;
   internalWarningLabel: string;
 };

@@ -29,8 +29,19 @@ export function ComparisonTable({ rows }: { rows: ApprovedComparisonRow[] }) {
             <th>English</th>
             <th>Age</th>
             <th>Skills</th>
-            <th>Source</th>
+            <th>Source Title</th>
+            <th>Source URL / Reference</th>
+            <th>Authority Tier</th>
+            <th>Source Date</th>
+            <th>Accessed At</th>
+            <th>Snapshot ID</th>
+            <th>Effective Date</th>
+            <th>Superseded Date</th>
             <th>Review</th>
+            <th>Review Required</th>
+            <th>Confidence</th>
+            <th>Conflict</th>
+            <th>Internal Warning</th>
           </tr>
         </thead>
         <tbody>
@@ -49,14 +60,29 @@ export function ComparisonTable({ rows }: { rows: ApprovedComparisonRow[] }) {
               <td>{row.englishConcessionStatus}</td>
               <td>{row.ageConcessionStatus}</td>
               <td>{row.skillsConcessionStatus}</td>
+              <td>{row.sourceTitle}</td>
               <td>
-                {row.source.title}
-                <br />
-                <span>{row.source.authorityTier}</span>
+                {row.sourceUrl ? (
+                  <a href={row.sourceUrl} target="_blank" rel="noreferrer">
+                    {row.sourceUrl}
+                  </a>
+                ) : (
+                  row.sourceReference
+                )}
               </td>
+              <td>{row.sourceAuthorityTier}</td>
+              <td>{row.sourceDate ?? "unknown"}</td>
+              <td>{row.accessedAt ?? "unknown"}</td>
+              <td>{row.sourceSnapshotId}</td>
+              <td>{row.effectiveDate ?? "unknown"}</td>
+              <td>{row.supersededDate ?? "not superseded"}</td>
               <td>
                 <StatusPill>{row.reviewStatus}</StatusPill>
               </td>
+              <td>{row.reviewRequiredReason ?? "none"}</td>
+              <td>{row.dataConfidence}</td>
+              <td>{row.conflictFlag ? "conflict flagged" : "no conflict flag"}</td>
+              <td>{row.internalWarningLabel}</td>
             </tr>
           ))}
         </tbody>
