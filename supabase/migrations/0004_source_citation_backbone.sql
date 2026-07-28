@@ -1,22 +1,33 @@
+alter table public.sources
+  add constraint sources_workspace_id_id_key unique (workspace_id, id);
+
+alter table public.source_snapshots
+  add constraint source_snapshots_workspace_id_id_key unique (workspace_id, id);
+
 create table public.source_snapshot_extracts (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
-  source_snapshot_id uuid not null references public.source_snapshots(id) on delete cascade,
+  source_snapshot_id uuid not null,
   page_number integer,
   section_heading text,
   extract_text text not null,
   extract_json jsonb,
   extraction_method text not null check (extraction_method in ('manual', 'pdf_text', 'ocr', 'web_scrape', 'ai_assisted')),
   confidence_score numeric check (confidence_score is null or (confidence_score >= 0 and confidence_score <= 1)),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  constraint source_snapshot_extracts_workspace_id_id_key unique (workspace_id, id),
+  constraint source_snapshot_extracts_workspace_snapshot_fk
+    foreign key (workspace_id, source_snapshot_id)
+    references public.source_snapshots (workspace_id, id)
+    on delete cascade
 );
 
 create table public.citations (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
-  source_id uuid not null references public.sources(id) on delete cascade,
-  source_snapshot_id uuid not null references public.source_snapshots(id) on delete cascade,
-  source_snapshot_extract_id uuid references public.source_snapshot_extracts(id) on delete set null,
+  source_id uuid not null,
+  source_snapshot_id uuid not null,
+  source_snapshot_extract_id uuid,
   citation_label text not null,
   quoted_text text,
   page_number integer,
@@ -24,7 +35,19 @@ create table public.citations (
   url_anchor text,
   source_date date,
   accessed_at timestamptz not null,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  constraint citations_workspace_id_id_key unique (workspace_id, id),
+  constraint citations_workspace_source_fk
+    foreign key (workspace_id, source_id)
+    references public.sources (workspace_id, id)
+    on delete cascade,
+  constraint citations_workspace_snapshot_fk
+    foreign key (workspace_id, source_snapshot_id)
+    references public.source_snapshots (workspace_id, id)
+    on delete cascade,
+  constraint citations_workspace_extract_fk
+    foreign key (workspace_id, source_snapshot_extract_id)
+    references public.source_snapshot_extracts (workspace_id, id)
 );
 
 create table public.entity_citations (
@@ -39,7 +62,7 @@ create table public.entity_citations (
     'source_snapshot'
   )),
   entity_id uuid not null,
-  citation_id uuid not null references public.citations(id) on delete cascade,
+  citation_id uuid not null,
   citation_role text not null check (citation_role in (
     'primary_support',
     'secondary_support',
@@ -47,13 +70,17 @@ create table public.entity_citations (
     'background_only'
   )),
   created_at timestamptz not null default now(),
+  constraint entity_citations_workspace_citation_fk
+    foreign key (workspace_id, citation_id)
+    references public.citations (workspace_id, id)
+    on delete cascade,
   unique (entity_type, entity_id, citation_id, citation_role)
 );
 
 create table public.source_governance_notes (
   id uuid primary key default gen_random_uuid(),
   workspace_id uuid not null references public.workspaces(id) on delete cascade,
-  source_id uuid not null references public.sources(id) on delete cascade,
+  source_id uuid not null,
   note_type text not null check (note_type in (
     'lawyer_review_note',
     'mapping_decision',
@@ -62,7 +89,11 @@ create table public.source_governance_notes (
   )),
   note_text text not null,
   created_by uuid references auth.users(id),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  constraint source_governance_notes_workspace_source_fk
+    foreign key (workspace_id, source_id)
+    references public.sources (workspace_id, id)
+    on delete cascade
 );
 
 create index idx_source_snapshot_extracts_snapshot on public.source_snapshot_extracts (workspace_id, source_snapshot_id);

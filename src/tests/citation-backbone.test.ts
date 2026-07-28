@@ -44,6 +44,25 @@ describe("Phase 2 citation backbone", () => {
     expect(migration).toContain("alter table public.citations enable row level security;");
   });
 
+  it("enforces workspace consistency for Phase 2 source and citation references", () => {
+    expect(migration).toContain("add constraint sources_workspace_id_id_key unique (workspace_id, id)");
+    expect(migration).toContain("add constraint source_snapshots_workspace_id_id_key unique (workspace_id, id)");
+    expect(migration).toContain("constraint source_snapshot_extracts_workspace_snapshot_fk");
+    expect(migration).toContain("foreign key (workspace_id, source_snapshot_id)");
+    expect(migration).toContain("references public.source_snapshots (workspace_id, id)");
+    expect(migration).toContain("constraint citations_workspace_source_fk");
+    expect(migration).toContain("foreign key (workspace_id, source_id)");
+    expect(migration).toContain("references public.sources (workspace_id, id)");
+    expect(migration).toContain("constraint citations_workspace_snapshot_fk");
+    expect(migration).toContain("constraint citations_workspace_extract_fk");
+    expect(migration).toContain("foreign key (workspace_id, source_snapshot_extract_id)");
+    expect(migration).toContain("references public.source_snapshot_extracts (workspace_id, id)");
+    expect(migration).toContain("constraint entity_citations_workspace_citation_fk");
+    expect(migration).toContain("foreign key (workspace_id, citation_id)");
+    expect(migration).toContain("references public.citations (workspace_id, id)");
+    expect(migration).toContain("constraint source_governance_notes_workspace_source_fk");
+  });
+
   it("requires a primary support citation before displaying a material rule as verified", () => {
     expect(
       canDisplayMaterialRuleAsVerified({
