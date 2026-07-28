@@ -22,6 +22,8 @@ function baseRecord(overrides: Partial<StructuredComparisonCandidate> = {}): Str
     dataConfidence: "unknown",
     source: approvedSource,
     sourceSnapshotId: "snapshot-1",
+    primaryCitationId: "citation-1",
+    primaryCitationLabel: "Primary official source citation",
     conflictFlag: false,
     ...overrides
   };
@@ -54,6 +56,10 @@ describe("comparison source restrictions", () => {
 
   it("blocks records without a source snapshot reference", () => {
     expect(buildApprovedComparisonRows([baseRecord({ sourceSnapshotId: undefined })])).toEqual([]);
+  });
+
+  it("blocks records without a primary citation reference", () => {
+    expect(buildApprovedComparisonRows([baseRecord({ primaryCitationId: undefined })])).toEqual([]);
   });
 
   it("defaults missing subclass and concession statuses to unknown", () => {

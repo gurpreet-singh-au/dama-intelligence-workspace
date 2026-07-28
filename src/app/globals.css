@@ -177,6 +177,17 @@ th {
   padding: 24px;
 }
 
+.compact-list {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.compact-list li + li {
+  margin-top: 6px;
+}
+
 @media (max-width: 760px) {
   .app-shell {
     grid-template-columns: 1fr;

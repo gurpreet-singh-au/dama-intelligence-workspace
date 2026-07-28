@@ -28,6 +28,57 @@ export type SourceRecord = {
   accessedAt?: string;
 };
 
+export type SourceSnapshotExtract = {
+  id: string;
+  workspaceId: string;
+  sourceSnapshotId: string;
+  pageNumber?: number;
+  sectionHeading?: string;
+  extractText: string;
+  extractionMethod: "manual" | "pdf_text" | "ocr" | "web_scrape" | "ai_assisted";
+  confidenceScore?: number;
+};
+
+export type Citation = {
+  id: string;
+  workspaceId: string;
+  sourceId: string;
+  sourceSnapshotId: string;
+  sourceSnapshotExtractId?: string;
+  citationLabel: string;
+  quotedText?: string;
+  pageNumber?: number;
+  sectionHeading?: string;
+  urlAnchor?: string;
+  sourceDate?: string;
+  accessedAt: string;
+};
+
+export type EntityCitation = {
+  id: string;
+  workspaceId: string;
+  entityType:
+    | "dama_occupation_rule"
+    | "dama_visa_availability_rule"
+    | "dama_concession_rule"
+    | "candidate_extraction_record"
+    | "source"
+    | "source_snapshot";
+  entityId: string;
+  citationId: string;
+  citationRole: "primary_support" | "secondary_support" | "conflicting_source" | "background_only";
+};
+
+export type SourceGovernanceNote = {
+  id: string;
+  workspaceId: string;
+  sourceId: string;
+  noteType: "lawyer_review_note" | "mapping_decision" | "data_quality_note" | "governance_note";
+  noteText: string;
+  createdBy?: string;
+  createdAt: string;
+};
+
 export type CandidateExtractionRecord = {
   id: string;
   workspaceId: string;
@@ -51,6 +102,8 @@ export type StructuredComparisonCandidate = {
   sourceSnapshotId?: string;
   supersededDate?: string;
   conflictFlag: boolean;
+  primaryCitationId?: string;
+  primaryCitationLabel?: string;
   subclass482Status?: AvailabilityStatus;
   subclass186Status?: AvailabilityStatus;
   subclass494Status?: AvailabilityStatus;
@@ -89,6 +142,8 @@ export type ApprovedComparisonRow = Required<
   sourceDate?: string;
   accessedAt?: string;
   sourceSnapshotId: string;
+  primaryCitationId: string;
+  primaryCitationLabel: string;
   effectiveDate?: string;
   supersededDate?: string;
   reviewRequiredReason?: ReviewRequiredReason;

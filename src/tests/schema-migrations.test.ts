@@ -3,17 +3,19 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const migration = readFileSync(join(process.cwd(), "supabase/migrations/0001_initial_schema.sql"), "utf8");
+const phaseTwoMigration = readFileSync(join(process.cwd(), "supabase/migrations/0004_source_citation_backbone.sql"), "utf8");
 const rlsMigration = readFileSync(join(process.cwd(), "supabase/migrations/0002_rls_policies.sql"), "utf8");
 const seed = readFileSync(join(process.cwd(), "supabase/seed.sql"), "utf8");
 
 describe("schema migration safety gates", () => {
   it("defines the approved comparison view from structured rules, not candidate records", () => {
-    const viewSql = migration.slice(migration.indexOf("create view public.approved_comparison_rows"));
+    const viewSql = phaseTwoMigration.slice(phaseTwoMigration.indexOf("create view public.approved_comparison_rows"));
 
     expect(viewSql).toContain("from public.dama_occupation_rules dor");
     expect(viewSql).toContain("dor.review_status = 'approved'");
     expect(viewSql).toContain("s.status = 'approved_for_production_rules'");
     expect(viewSql).toContain("dor.source_snapshot_id is not null");
+    expect(viewSql).toContain("ec.citation_role = 'primary_support'");
     expect(viewSql).not.toContain("candidate_extraction_records");
   });
 

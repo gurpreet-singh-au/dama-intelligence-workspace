@@ -12,6 +12,7 @@ export function isApprovedComparisonCandidate(record: StructuredComparisonCandid
       record.source &&
       record.source.id &&
       record.sourceSnapshotId &&
+      record.primaryCitationId &&
       !record.supersededDate
   );
 }
@@ -37,6 +38,8 @@ export function buildApprovedComparisonRows(records: StructuredComparisonCandida
     sourceDate: record.source?.sourceDate,
     accessedAt: record.source?.accessedAt,
     sourceSnapshotId: record.sourceSnapshotId as string,
+    primaryCitationId: record.primaryCitationId as string,
+    primaryCitationLabel: record.primaryCitationLabel ?? "Primary citation",
     effectiveDate: record.source?.effectiveDate,
     supersededDate: record.supersededDate,
     subclass482Status: availabilityLabel(record.subclass482Status),
