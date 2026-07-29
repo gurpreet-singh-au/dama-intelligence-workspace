@@ -188,6 +188,61 @@ th {
   margin-top: 6px;
 }
 
+.rule-workflow {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.rule-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+}
+
+.rule-type-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 14px;
+}
+
+.rule-type {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.rule-type h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+.rule-type label {
+  color: var(--foreground);
+  display: grid;
+  font-size: 13px;
+  font-weight: 700;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.rule-type select {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--foreground);
+  padding: 9px 10px;
+}
+
+.checklist {
+  color: var(--muted);
+  columns: 2;
+  line-height: 1.7;
+  margin: 0;
+  padding-left: 20px;
+}
+
 @media (max-width: 760px) {
   .app-shell {
     grid-template-columns: 1fr;
@@ -204,5 +259,9 @@ th {
 
   .page-header {
     display: block;
+  }
+
+  .checklist {
+    columns: 1;
   }
 }

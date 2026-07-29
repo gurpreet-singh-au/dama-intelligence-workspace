@@ -5,6 +5,7 @@ const navItems = [
   ["Dashboard", "/dashboard"],
   ["Sources", "/sources"],
   ["Occupations", "/occupations"],
+  ["Structured Rules", "/rules"],
   ["Review Queue", "/review-queue"],
   ["Comparison", "/comparison"],
   ["Audit Log", "/audit-log"],
@@ -18,7 +19,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="brand">DAMA Intelligence Workspace</div>
         <nav className="nav" aria-label="Workspace navigation">
           {navItems.map(([label, href]) => (
-            <Link href={href} key={href}>
+            <Link href={href as Parameters<typeof Link>[0]["href"]} key={href}>
               {label}
             </Link>
           ))}

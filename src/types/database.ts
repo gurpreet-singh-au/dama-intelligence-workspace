@@ -88,6 +88,33 @@ export type CandidateExtractionRecord = {
   reviewRequiredReason?: ReviewRequiredReason;
 };
 
+export type MaterialRuleSafetyFields = {
+  id: string;
+  workspaceId: string;
+  reviewStatus: ReviewStatus;
+  dataConfidence?: DataConfidence;
+  reviewRequiredReason?: ReviewRequiredReason;
+  source: SourceRecord | null;
+  sourceSnapshotId?: string;
+  primaryCitationId?: string;
+  supersededDate?: string;
+  conflictFlag?: boolean;
+};
+
+export type StructuredVisaAvailabilityRule = MaterialRuleSafetyFields & {
+  subclass: "482" | "186" | "494";
+  availabilityStatus: AvailabilityStatus;
+  entityCitations?: EntityCitation[];
+  citations?: Citation[];
+};
+
+export type StructuredConcessionRule = MaterialRuleSafetyFields & {
+  concessionType: "salary" | "english" | "age" | "skills";
+  availabilityStatus: AvailabilityStatus;
+  entityCitations?: EntityCitation[];
+  citations?: Citation[];
+};
+
 export type StructuredComparisonCandidate = {
   id: string;
   workspaceId: string;
@@ -104,6 +131,8 @@ export type StructuredComparisonCandidate = {
   conflictFlag: boolean;
   primaryCitationId?: string;
   primaryCitationLabel?: string;
+  entityCitations?: EntityCitation[];
+  citations?: Citation[];
   subclass482Status?: AvailabilityStatus;
   subclass186Status?: AvailabilityStatus;
   subclass494Status?: AvailabilityStatus;
@@ -111,6 +140,8 @@ export type StructuredComparisonCandidate = {
   englishConcessionStatus?: AvailabilityStatus;
   ageConcessionStatus?: AvailabilityStatus;
   skillsConcessionStatus?: AvailabilityStatus;
+  visaAvailabilityRules?: StructuredVisaAvailabilityRule[];
+  concessionRules?: StructuredConcessionRule[];
 };
 
 export type ApprovedComparisonRow = Required<

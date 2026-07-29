@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { buildApprovedComparisonRows } from "@/features/comparison/comparison-policy";
-import type { StructuredComparisonCandidate } from "@/types/database";
+import type { Citation, EntityCitation, StructuredComparisonCandidate } from "@/types/database";
 
 const approvedSource = {
   id: "source-1",
@@ -9,6 +9,24 @@ const approvedSource = {
   authorityTier: "tier_2_dama_region_official_source",
   status: "approved_for_production_rules"
 } as const;
+
+const primaryCitation: Citation = {
+  id: "citation-1",
+  workspaceId: "workspace-1",
+  sourceId: "source-1",
+  sourceSnapshotId: "snapshot-1",
+  citationLabel: "Primary official source citation",
+  accessedAt: "2026-07-28T00:00:00Z"
+};
+
+const entityCitation: EntityCitation = {
+  id: "entity-citation-1",
+  workspaceId: "workspace-1",
+  entityType: "dama_occupation_rule",
+  entityId: "rule-1",
+  citationId: "citation-1",
+  citationRole: "primary_support"
+};
 
 function baseRecord(overrides: Partial<StructuredComparisonCandidate> = {}): StructuredComparisonCandidate {
   return {
@@ -24,6 +42,8 @@ function baseRecord(overrides: Partial<StructuredComparisonCandidate> = {}): Str
     sourceSnapshotId: "snapshot-1",
     primaryCitationId: "citation-1",
     primaryCitationLabel: "Primary official source citation",
+    entityCitations: [entityCitation],
+    citations: [primaryCitation],
     conflictFlag: false,
     ...overrides
   };
@@ -60,6 +80,28 @@ describe("comparison source restrictions", () => {
 
   it("blocks records without a primary citation reference", () => {
     expect(buildApprovedComparisonRows([baseRecord({ primaryCitationId: undefined })])).toEqual([]);
+  });
+
+  it("blocks records without a same-workspace citation chain", () => {
+    expect(
+      buildApprovedComparisonRows([
+        baseRecord({
+          entityCitations: [
+            {
+              ...entityCitation,
+              workspaceId: "workspace-2"
+            }
+          ]
+        })
+      ])
+    ).toEqual([]);
+  });
+
+  it("blocks conflicted, stale or low-confidence records", () => {
+    expect(buildApprovedComparisonRows([baseRecord({ conflictFlag: true })])).toEqual([]);
+    expect(buildApprovedComparisonRows([baseRecord({ reviewRequiredReason: "conflicting_source" })])).toEqual([]);
+    expect(buildApprovedComparisonRows([baseRecord({ dataConfidence: "low" })])).toEqual([]);
+    expect(buildApprovedComparisonRows([baseRecord({ supersededDate: "2026-07-28" })])).toEqual([]);
   });
 
   it("defaults missing subclass and concession statuses to unknown", () => {
